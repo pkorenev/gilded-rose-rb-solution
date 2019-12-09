@@ -13,7 +13,7 @@ class GildedRose
 
   private
 
-  ITEM_NAMES = OpenStruct.new(
+  RESERVED_ITEM_NAMES = OpenStruct.new(
     aged_brie: 'Aged Brie',
     backstage: 'Backstage passes to a TAFKAL80ETC concert',
     sulfuras: 'Sulfuras, Hand of Ragnaros',
@@ -36,9 +36,9 @@ class GildedRose
   def calculate_new_quality(item)
     return LEGENDARY_QUALITY if legendary_item?(item)
     if item.sell_in <= 0
-      if item.name == ITEM_NAMES.backstage
+      if item.name == RESERVED_ITEM_NAMES.backstage
         return 0
-      elsif item.name == ITEM_NAMES.conjured
+      elsif item.name == RESERVED_ITEM_NAMES.conjured
         return normalize_quality(item.quality - 4)
       elsif regular_item?(item)
         return normalize_quality(item.quality - 2)
@@ -49,11 +49,11 @@ class GildedRose
 
     if regular_item?(item)
       new_quality = item.quality - 1
-    elsif item.name == ITEM_NAMES.conjured
+    elsif item.name == RESERVED_ITEM_NAMES.conjured
       new_quality = item.quality - 2
-    elsif item.name == ITEM_NAMES.aged_brie
+    elsif item.name == RESERVED_ITEM_NAMES.aged_brie
       new_quality = item.quality + 1
-    elsif item.name == ITEM_NAMES.backstage
+    elsif item.name == RESERVED_ITEM_NAMES.backstage
       breakpoint = BACKSTAGE_BREAKPOINTS.find { |bp| item.sell_in <= bp[:sell_in] }
       quality_increment = breakpoint ? breakpoint[:quality_increment] : 1
       new_quality = item.quality + quality_increment
@@ -79,15 +79,15 @@ class GildedRose
   end
 
   def regular_item?(item)
-    !ITEM_NAMES.to_h.values.include?(item.name)
+    !RESERVED_ITEM_NAMES.to_h.values.include?(item.name)
   end
 
   def unlimited_sell_in?(item)
-    legendary_item?(item) || item.name == ITEM_NAMES.aged_brie
+    legendary_item?(item) || item.name == RESERVED_ITEM_NAMES.aged_brie
   end
 
   def legendary_item?(item)
-    item.name == ITEM_NAMES.sulfuras
+    item.name == RESERVED_ITEM_NAMES.sulfuras
   end
 end
 
